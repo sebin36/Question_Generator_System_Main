@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Generation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin-bottom: 40px;
+        }
+
+        textarea {
+            width: 97%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            resize: none;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        li:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .action-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            form {
+                width: 90%;
+            }
+
+            button {
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Question Generation App</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+        <textarea name="context" rows="10" cols="80" placeholder="Enter the context here">{{ context }}</textarea><br><br>
+        <button type="submit">Generate Questions</button>
+    </form>
+
+    <h2>Generated Questions:</h2>
+    <ul id="questions-list">
+        {% for question in questions %}
+            <li>{{ question }}</li>
+        {% empty %}
+            <p>No questions generated yet.</p>
+        {% endfor %}
+    </ul>
+
+    {% if questions %}
+    <div class="action-buttons">
+        <button id="download-button" onclick="downloadQuestions()">Download Questions</button>
+    </div>
+    {% endif %}
+
+    <script>
+        function downloadQuestions() {
+            // Get the list of questions
+            const questions = Array.from(document.querySelectorAll('#questions-list li')).map(li => li.textContent).join('\n');
+
+            // Create a blob object with the questions
+            const blob = new Blob([questions], { type: 'text/plain' });
+
+            // Create a link element to download the file
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'generated_questions.txt';
+
+            // Simulate a click on the link to trigger the download
+            link.click();
+        }
+    </script>
+</body>
+</html>

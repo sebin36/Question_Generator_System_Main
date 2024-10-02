@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            display: flex;
+        }
+
+        /* Side navigation menu */
+        .side-nav {
+            height: 100vh;
+            width: 250px;
+            background-color: #333;
+            padding-top: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+        }
+
+        .side-nav a {
+            padding: 15px 20px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #fff;
+            display: block;
+            transition: background-color 0.3s;
+        }
+
+        /* Highlight the active option */
+        .side-nav a.active {
+            background-color: #4CAF50;
+        }
+
+        .side-nav a:hover {
+            background-color: #575757;
+        }
+
+        /* Content area */
+        .content-container {
+            margin-left: 250px;
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+        }
+
+        .content {
+            max-width: 800px;
+            width: 100%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        @media (max-width: 600px) {
+            .side-nav {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .content-container {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Side Navigation Menu -->
+    <div class="side-nav" id="side-nav">
+        <a href="#" onclick="showContent('dashboard', this)" class="active">Dashboard</a>
+        <!-- <a href="#" onclick="showContent('history', this)">View History</a> -->
+        <a href="#" onclick="showContent('profile', this)">Profile Settings</a>
+        <a href="#" onclick="showContent('password', this)">Change Password</a>
+        <a href="/logout" onclick="showContent('logout', this)">Logout</a>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="content-container">
+        <div id="main-content" class="content">
+            <h1>Welcome to the User Dashboard</h1>
+            <p>Select an option from the menu to see more details.</p>
+        </div>
+    </div>
+
+    <script>
+        function showContent(option, element) {
+            const content = document.getElementById('main-content');
+
+            // Clear the active class from all menu items
+            const menuItems = document.querySelectorAll('.side-nav a');
+            menuItems.forEach(item => item.classList.remove('active'));
+
+            // Add active class to the clicked menu item
+            element.classList.add('active');
+
+            if (option === 'dashboard') {
+                content.innerHTML = `
+                    <h1>Dashboard</h1>
+                    <p>Welcome to your personalized dashboard.</p>
+                `;
+            } else if (option === 'history') {
+                content.innerHTML = `
+                    <h1>View History</h1>
+                    <p>Loading history...</p>
+                `;
+
+                // Fetch user history from the backend
+                fetch('/view-history')  // Assume your API is at this endpoint
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.history && data.history.length > 0) {
+                            let historyHTML = '<ul>';
+                            data.history.forEach(item => {
+                                historyHTML += `
+                                    <li>
+                                        <strong>Prompt:</strong> ${item.prompt.slice(0, 50)}...<br>
+                                        <strong>Questions:</strong> ${item.questions.length}<br>
+                                        <strong>Generated At:</strong> ${new Date(item.generated_at).toLocaleString()}<br>
+                                        <a href="${item.url}">View Full History</a>
+                                    </li>
+                                    <hr>
+                                `;
+                            });
+                            historyHTML += '</ul>';
+                            content.innerHTML = `
+                                <h1>View History</h1>
+                                ${historyHTML}
+                            `;
+                        } else {
+                            content.innerHTML = `
+                                <h1>View History</h1>
+                                <p>No history available.</p>
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        content.innerHTML = `
+                            <h1>View History</h1>
+                            <p>Error loading history.</p>
+                        `;
+                    });
+
+            } else if (option === 'profile') {
+                content.innerHTML = `
+                    <h1>Profile Settings</h1>
+                    <p>Loading profile...</p>
+                `;
+
+                // Fetch user profile details from the backend
+                fetch('/profile-details')  // Assume your API is at this endpoint
+                    .then(response => response.json())
+                    .then(data => {
+                        content.innerHTML = `
+                            <h1>Profile Settings</h1>
+                            <form id="profile-form">
+                                <label for="first_name">First Name</label>
+                                <input type="text" id="first_name" name="first_name" value="${data.first_name}" required>
+                                
+                                <label for="last_name">Last Name</label>
+                                <input type="text" id="last_name" name="last_name" value="${data.last_name}" required>
+
+                                <label for="username">Username</label>
+                                <input type="text" id="username" name="username" value="${data.username}" required>
+
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" value="${data.email}" required>
+
+                                <button type="button" onclick="updateProfile()">Update</button>
+                            </form>
+                        `;
+                    })
+                    .catch(error => {
+                        content.innerHTML = `
+                            <h1>Profile Settings</h1>
+                            <p>Error loading profile details.</p>
+                        `;
+                    });
+
+            } else if (option === 'password') {
+                content.innerHTML = `
+                    <h1>Change Password</h1>
+                    <form id="password-change-form">
+                        <label for="current_password">Current Password</label>
+                        <input type="password" id="current_password" name="current_password" required>
+
+                        <label for="new_password">New Password</label>
+                        <input type="password" id="new_password" name="new_password" required>
+
+                        <label for="confirm_password">Confirm New Password</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required>
+
+                        <button type="button" onclick="changePassword()">Change Password</button>
+                    </form>
+                `;
+            } else if (option === 'logout') {
+                content.innerHTML = `
+                    <h1>Logout</h1>
+                    <p>You have successfully logged out. Thank you for using the dashboard.</p>
+                `;
+            }
+        }
+
+        function changePassword() {
+            const form = document.getElementById('password-change-form');
+            const formData = new FormData(form);
+
+            fetch('/change-password/', {  // Assume your endpoint for changing password is /change-password
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Password changed successfully!');
+                    // Optionally, redirect or clear the form
+                } else {
+                    alert('Failed to change password: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('Error changing password. Please try again later.');
+            });
+        }
+
+        function updateProfile() {
+            const form = document.getElementById('profile-form');
+            const formData = new FormData(form);
+
+            fetch('/update-profile/', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Profile updated successfully!');
+                } else {
+                    alert('Failed to update profile. Please try again.');
+                }
+            })
+            .catch(error => {
+                alert('Error updating profile. Please try again later.');
+            });
+        }
+    </script>
+</body>
+</html>

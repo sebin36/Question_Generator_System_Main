@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Question Generation System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Navigation bar */
+        .nav-bar {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 20px;
+        }
+
+        .nav-bar a {
+            text-decoration: none;
+            font-size: 16px;
+            color: #333;
+            margin-left: 20px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: 1px solid #4CAF50;
+            transition: background-color 0.3s;
+        }
+
+        .nav-bar a:hover {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            color: #555;
+            font-size: 20px;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .btn-get-started {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            font-size: 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-get-started:hover {
+            background-color: #45a049;
+        }
+
+        .greeting {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    {% if first_name and last_name %}
+        <b><p class="greeting">Hi, {{ first_name }} {{ last_name }}</p></b>
+    {% endif %}
+
+    <!-- Navigation bar for Login and Register buttons -->
+    <div class="nav-bar">
+        {% if first_name and last_name %}
+            <a href="/dashboard">Dashboard</a>
+            <a href="/logout">Logout</a>
+        {% else %}
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+        {% endif %}
+    </div>
+
+    <h1>Welcome to Question Generation System</h1>
+
+    <p>Our Question Generation System helps you generate meaningful and relevant questions based on a given context. 
+       Simply provide the context and let the system create insightful questions for you.</p>
+
+    <a href="/generate-questions" class="btn-get-started">Get Started</a>
+
+</body>
+</html>
