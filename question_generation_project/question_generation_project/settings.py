@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-2fq&9ic&0)!-u7x^x87h=2+8#@iw(un(@wqmmp2b3wze_wa5yr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['question-generation.onrender.com']
+ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
